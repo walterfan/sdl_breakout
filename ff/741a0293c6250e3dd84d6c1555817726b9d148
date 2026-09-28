@@ -1,0 +1,23 @@
+edge/src/Game.cpp
+  s_53ecfb8fbef2c4::t_10594597c7349a 9,38-41,81-86
+  s_53ecfb8fbef2c4::t_e24210134c8e99 43
+  s_53ecfb8fbef2c4::t_19daffce842537 222
+edge/third_party/sol2
+  s_53ecfb8fbef2c4::t_c733bebd8a1db9 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "ff741a0293c6250e3dd84d6c1555817726b9d148",
+  "prompts": {},
+  "sessions": {
+    "s_53ecfb8fbef2c4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0e68e-3259-7373-aa3d-61661a70cf42",
+        "model": "gpt-6-sol"
+      },
+      "human_author": "Walter Fan <walter.fan@zoom.us>"
+    }
+  }
+}
