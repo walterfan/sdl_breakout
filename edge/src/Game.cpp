@@ -6,6 +6,7 @@
 #include <SDL_ttf.h>
 
 #include <filesystem>
+#include <memory>
 
 #include "Globals.h"
 #include "LuaBindings.h"
@@ -34,10 +35,12 @@ std::filesystem::path getExecutableDir()
 
     return std::filesystem::path(buf).parent_path();
 #else
-    if (std::filesystem::exists("/proc/self/exe")) {
-        return std::filesystem::read_symlink("/proc/self/exe").parent_path();
+    std::unique_ptr<char, decltype(&SDL_free)> basePath(SDL_GetBasePath(), SDL_free);
+    if (!basePath) {
+        fprintf(stderr, "Unable to determine executable directory: %s\n", SDL_GetError());
+        std::exit(1);
     }
-    return std::filesystem::path();
+    return std::filesystem::path(basePath.get());
 #endif
 }
 
@@ -75,7 +78,12 @@ void Game::start(GameParams params)
 
 void Game::init()
 {
-    std::filesystem::current_path(getExecutableDir());
+    std::error_code pathError;
+    std::filesystem::current_path(getExecutableDir(), pathError);
+    if (pathError) {
+        fprintf(stderr, "Unable to use executable directory: %s\n", pathError.message().c_str());
+        std::exit(1);
+    }
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
@@ -211,7 +219,7 @@ void Game::render()
 void Game::cleanup()
 {
     // shut down Lua
-    luaGame = sol::nil;
+    luaGame = sol::lua_nil;
     lua = sol::state{}; // hack - this will kill the state and do a garbage collection
 
     SDL_DestroyTexture(screenTexture);
